@@ -12,7 +12,7 @@ public class TertisBlock : MonoBehaviour
     private float previousTime = 0.0f;
     public float fallTime = 0.8f;
     public float realFallTime = 0.8f;
-    private bool canMove = true;
+    private PlayerInput player;
     public static int height = 23; //長
     public static int width = 10; //寬
     private static Transform[,] grid = new Transform[width, height]; //存方塊屬於哪個格子的矩陣 且所有方塊能存取到的矩陣值需要相同
@@ -21,7 +21,7 @@ public class TertisBlock : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = gameObject.GetComponent<PlayerInput>();
     }
 
     // Update is called once per frame
@@ -35,7 +35,7 @@ public class TertisBlock : MonoBehaviour
 
     public void HorizontalMoveLeft(InputAction.CallbackContext context) //控制方塊左右移動
     {
-        if (context.performed && canMove) { 
+        if (context.performed) { 
             transform.position += new Vector3(-1, 0, 0);
             if (!VaildMove())
             { //碰到邊界還原原本移動
@@ -46,7 +46,7 @@ public class TertisBlock : MonoBehaviour
 
     public void HorizontalMoveRight(InputAction.CallbackContext context) //控制方塊左右移動
     {
-        if (context.performed && canMove)
+        if (context.performed)
         {
             transform.position += new Vector3(1, 0, 0);
             if (!VaildMove())
@@ -68,7 +68,7 @@ public class TertisBlock : MonoBehaviour
                 transform.position += new Vector3(0, 1, 0);
                 AddToGrid();
                 CheckForLines();
-                canMove = false;
+                player.actions.Disable();
                 this.enabled = false;
                 FindObjectOfType<SpawnTetromino>().NewTetromino(); //碰到底部讓此物件無法操作並生成新的方塊
             }
@@ -76,7 +76,7 @@ public class TertisBlock : MonoBehaviour
     }
 
     public void TertrisRotateClockWise(InputAction.CallbackContext context) { //控制旋轉 之後需要做逆時針轉
-        if(context.performed && canMove) {
+        if(context.performed) {
             transform.RotateAround(transform.TransformPoint(pivot), new Vector3(0, 0, 1), 90);
             if(!VaildMove())
             { //之後要做wallkick要改
@@ -86,7 +86,7 @@ public class TertisBlock : MonoBehaviour
     }
     public void TertrisRotateClockCounterWise(InputAction.CallbackContext context)
     { //控制旋轉 之後需要做逆時針轉
-        if (context.performed && canMove)
+        if (context.performed)
         {
             transform.RotateAround(transform.TransformPoint(pivot), new Vector3(0, 0, 1), -90);
             if (!VaildMove())
