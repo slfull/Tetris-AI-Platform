@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 public class TertisBlock : MonoBehaviour
 {
@@ -13,6 +15,8 @@ public class TertisBlock : MonoBehaviour
     public static int height = 23; //長
     public static int width = 10; //寬
     private static Transform[,] grid = new Transform[width, height]; //存方塊屬於哪個格子的矩陣 且所有方塊能存取到的矩陣值需要相同
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,26 +26,29 @@ public class TertisBlock : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HorizontalMove();
+
         TertrisFallDown();
-        TertrisRotate();
         
     }
 
-    void HorizontalMove() //控制方塊左右移動
+
+    public void HorizontalMoveLeft(InputAction.CallbackContext context) //控制方塊左右移動
     {
-        if(Input.GetKeyDown(KeyCode.LeftArrow))
-        {
+        if (context.performed) { 
             transform.position += new Vector3(-1, 0, 0);
-            if(!VaildMove())
+            if (!VaildMove())
             { //碰到邊界還原原本移動
                 transform.position += new Vector3(1, 0, 0);
             }
         }
-        if(Input.GetKeyDown(KeyCode.RightArrow))
+    }
+
+    public void HorizontalMoveRight(InputAction.CallbackContext context) //控制方塊左右移動
+    {
+        if (context.performed)
         {
             transform.position += new Vector3(1, 0, 0);
-            if(!VaildMove()) 
+            if (!VaildMove())
             { //碰到邊界還原原本移動
                 transform.position += new Vector3(-1, 0, 0);
             }
@@ -65,13 +72,24 @@ public class TertisBlock : MonoBehaviour
             }
         }
     }
-    
-    void TertrisRotate() { //控制旋轉 之後需要做逆時針轉
-        if(Input.GetKeyDown(KeyCode.UpArrow)) {
+
+    public void TertrisRotateClockWise(InputAction.CallbackContext context) { //控制旋轉 之後需要做逆時針轉
+        if(context.performed) {
             transform.RotateAround(transform.TransformPoint(pivot), new Vector3(0, 0, 1), 90);
             if(!VaildMove())
             { //之後要做wallkick要改
                 transform.RotateAround(transform.TransformPoint(pivot), new Vector3(0, 0, 1), -90);
+            }
+        }
+    }
+    public void TertrisRotateClockCounterWise(InputAction.CallbackContext context)
+    { //控制旋轉 之後需要做逆時針轉
+        if (context.performed)
+        {
+            transform.RotateAround(transform.TransformPoint(pivot), new Vector3(0, 0, 1), -90);
+            if (!VaildMove())
+            { //之後要做wallkick要改
+                transform.RotateAround(transform.TransformPoint(pivot), new Vector3(0, 0, 1), 90);
             }
         }
     }
