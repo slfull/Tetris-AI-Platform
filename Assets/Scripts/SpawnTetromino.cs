@@ -20,6 +20,7 @@ public class SpawnTetromino : MonoBehaviour
         {
             NewTetrominoList();
         }
+        FindObjectOfType<NextBlock>().SpawnNextBlock();
     }
 
 
@@ -28,7 +29,6 @@ public class SpawnTetromino : MonoBehaviour
     {
         objectList = new List<GameObject>(Tetrominoes);
         Shuffle(objectList);
-        
     }
     private void Shuffle(List<GameObject> list)
     {

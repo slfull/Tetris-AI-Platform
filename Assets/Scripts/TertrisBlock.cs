@@ -27,9 +27,15 @@ public class TertisBlock : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        TertrisFallDown();
-        
+        if(IsNextBar())
+        {
+            Destroy(player);
+            Destroy(this); //生在nextBar就直接移除此component
+        }
+        else
+        {
+            TertrisFallDown();
+        }
     }
 
 
@@ -68,8 +74,8 @@ public class TertisBlock : MonoBehaviour
                 transform.position += new Vector3(0, 1, 0);
                 AddToGrid();
                 CheckForLines();
-                player.actions.Disable();
                 this.enabled = false;
+                player.actions.Disable();
                 FindObjectOfType<SpawnTetromino>().NewTetromino(); //碰到底部讓此物件無法操作並生成新的方塊
             }
         }
@@ -172,4 +178,11 @@ public class TertisBlock : MonoBehaviour
         }
         return true;
     }
+    bool IsNextBar()
+    {   
+        int roundedX = Mathf.RoundToInt(transform.position.x);
+        return roundedX == 15; //是否生在next bar
+    }
 }
+
+    
